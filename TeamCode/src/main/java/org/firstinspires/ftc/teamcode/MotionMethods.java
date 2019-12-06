@@ -19,7 +19,7 @@ public class MotionMethods {
     }
 
     public void moveMotionProfile(double inches, double power){//power is between 0 and 1
-        double maxVel = 312 * 3.937 / 60000; // 312 is the rotations per minute, 3.937 is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
+        double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
         double macAcc = maxVel / 1300; //1300 is the number of milliseconds it takes to accelerate to full speed
         MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
         double[] motionProfile = generator.generateProfile(inches);
@@ -60,6 +60,14 @@ public class MotionMethods {
         robot.drivetrain.setRunMode(originalMode);
     }
 
+    /**
+     * This method makes the robot turn counterclockwise based on gyro values and PID
+     * Velocity is always positive. Set neg degrees for clockwise turn
+     * pwr in setPower(pwr) is a fraction [-1.0, 1.0] of 12V
+     *
+     * @param degrees  desired angle in deg
+     * @param velocity max velocity
+     */
     public void turnUsingPIDVoltage(double degrees, double velocity) {
         DcMotor.RunMode original = robot.frontLeft.getMode(); //assume all drive motors r the same runmode
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);

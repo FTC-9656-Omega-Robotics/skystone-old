@@ -16,12 +16,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
- * Hardware mapping for Rover Ruckus 2018
+ * Hardware mapping for SkyStone 2019
  */
 
 public class OmegaBot {
+    //telemetry an hardwaremap come from each opmode
     public Telemetry telemetry;
     public HardwareMap hardwareMap;
+
+    //DC motors we want
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
@@ -31,6 +34,7 @@ public class OmegaBot {
     public DcMotor leftIntake;
     public DcMotor rightIntake;
 
+    //servos we want
     public Servo pivot;
     public Servo blockGripper;
     public Servo leftGripper;
@@ -47,13 +51,12 @@ public class OmegaBot {
     final double turnTimeLimit = 2.5;
     final double driveTimeLimitPer1Foot = 0.80; //1.5 sec per 12 inches
     Orientation lastAngles = new Orientation();
-    BNO055IMU imu;
+    BNO055IMU imu;//gyro
     public OmegaPID turnPID;
     public OmegaPID drivePID;
     double globalAngle, power = .30, correction;
 
     double MOVE_CORRECTION_ADDENDUM = 0;
-    double AUTO_GOLD_RADIUS = 110;
 
     OmegaBot(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
@@ -89,8 +92,6 @@ public class OmegaBot {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //pivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //extension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -109,56 +110,9 @@ public class OmegaBot {
 
         drivetrain = new OmegaDriveTrain(frontLeft, frontRight, backLeft, backRight);
         drivetrain.setRunMode(myRunMode);
-        turnPID = new OmegaPID(0.25, 0.000008, 0.36, turnTolerance); //0.015, 0.00008, 0.05 work for robotSpeed = 0.6. now tuning for 1.0
-        drivePID = new OmegaPID(0.45, 0.0001, 0.395, driveTolerance);//.25, .0001, .08 has some jitters
+        turnPID = new OmegaPID(0.25, 0, 0.36, turnTolerance); //0.015, 0.00008, 0.05 work for robotSpeed = 0.6. now tuning for 1.0
+        drivePID = new OmegaPID(0.45, 0, 0.395, driveTolerance);//.25, .0001, .08 has some jitters
     }//.25,.00008,.5
-
-    public void movePID(double inches, double velocity) {
-        double target = ticksPerInch * inches + drivetrain.getAvgEncoderValueOfFrontWheels();
-        DcMotor.RunMode originalMode = frontLeft.getMode(); //Assume that all wheels have the same runmode
-        drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        int count = 0;
-        ElapsedTime runtime = new ElapsedTime();
-        while (runtime.seconds() < driveTimeLimitPer1Foot * (inches / 12.0)) {
-            drivetrain.setVelocity(drivePID.calculatePower(drivetrain.getAvgEncoderValueOfFrontWheels(), target, -velocity, velocity));
-            telemetry.addData("Count", count);
-            telemetry.update();
-        }
-        drivetrain.setVelocity(0);
-        drivetrain.setRunMode(originalMode);
-    }
-
-    /**
-     * This method makes the robot turn counterclockwise based on gyro values and PID
-     * Velocity is always positive. Set neg degrees for clockwise turn
-     * pwr in setPower(pwr) is a fraction [-1.0, 1.0] of 12V
-     *
-     * @param degrees  desired angle in deg
-     * @param velocity max velocity
-     */
-    public void turnUsingPIDVoltage(double degrees, double velocity) {
-        DcMotor.RunMode original = frontLeft.getMode(); //assume all drive motors r the same runmode
-        drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double max = 12.0 * velocity;
-        double targetHeading = getAngle() + degrees;
-        int count = 0;
-        ElapsedTime runtime = new ElapsedTime();
-        while (runtime.seconds() < turnTimeLimit) {
-            velocity = (turnPID.calculatePower(getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
-            telemetry.addData("Count", count);
-            telemetry.addData("Calculated velocity [-1.0, 1/0]", turnPID.getDiagnosticCalculatedPower() / 12.0);
-            telemetry.addData("PID power [-1.0, 1.0]", velocity);
-            telemetry.update();
-            frontLeft.setPower(-velocity);
-            backLeft.setPower(-velocity);
-            frontRight.setPower(velocity);
-            backRight.setPower(velocity);
-            count++;
-        }
-        drivetrain.setVelocity(0);
-        drivetrain.setRunMode(original);
-    }
-
 
     /**
      * Resets the cumulative angle tracking to zero.

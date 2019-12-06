@@ -12,7 +12,7 @@ public class LinearTeleop extends LinearOpMode {
     boolean intakeOn = true;
 
     public void runOpMode(){
-        robot = new OmegaBot(telemetry,hardwareMap);
+        robot = new OmegaBot(telemetry,hardwareMap);//initializing hardware
         waitForStart();
         runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         robot.leftIntake.setPower(1);
