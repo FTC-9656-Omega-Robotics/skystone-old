@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "LinearTeleop", group = "prototype")
@@ -10,6 +11,7 @@ public class LinearTeleop extends LinearOpMode {
     private ElapsedTime runtime;
     double maxSpeed = 1;
     boolean intakeOn = true;
+    int armPos = 0;
 
     public void runOpMode(){
         robot = new OmegaBot(telemetry,hardwareMap);//initializing hardware
@@ -24,6 +26,8 @@ public class LinearTeleop extends LinearOpMode {
             intakeProcessIn();
             intakeProcessOut();
             foundationGrippers();
+            telemetry.addData("armPos",robot.arm.getCurrentPosition());
+            telemetry.update();
         }
     }
 
@@ -41,38 +45,42 @@ public class LinearTeleop extends LinearOpMode {
 
     public void servoProcess(){
         if(gamepad2.x){
-            robot.pivot.setPosition(0);
+            robot.pivot.setPosition(0.62);
         }else if(gamepad2.y){
-            robot.pivot.setPosition(.29);
+            robot.pivot.setPosition(.96);
         }
         if(gamepad2.right_bumper){
-            robot.blockGripper.setPosition(.45 );
+            robot.blockGripper.setPosition(.75);
         }else if(gamepad2.left_bumper){
-            robot.blockGripper.setPosition(.29);
+            robot.blockGripper.setPosition(.3);
         }
     }
 
     public void foundationGrippers(){
-        if(gamepad1.left_bumper){
-            robot.leftGripper.setPosition(.66);
-            robot.rightGripper.setPosition(.33);
+        if(gamepad1.left_trigger > 0.5){
+            robot.centerGripper.setPosition(1.00);
         }
-        else if (gamepad1.right_bumper){
-            robot.leftGripper.setPosition(0);
-            robot.rightGripper.setPosition(1);
+        else if (gamepad1.right_trigger > 0.5){
+            robot.centerGripper.setPosition(0.51);
         }
     }
 
     public void armProcess(){
         if(gamepad2.a){
-            robot.arm.setPower(.75);
+            armPos -= 5;
+            //robot.arm.setPower(.75);
             //moveArm(-30);
-        }else if (gamepad2.b){
-            //moveArm(30);
-            robot.arm.setPower(-.75);
-        }else{
-            robot.arm.setPower(0);
         }
+        else if(gamepad2.b){
+            armPos += 5;
+            //moveArm(30);
+            //robot.arm.setPower(-.75);
+        }//else{
+            //robot.arm.setPower(0);
+        //}
+        robot.arm.setTargetPosition(armPos);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(0.5);
     }
 
     public void intakeProcessIn(){

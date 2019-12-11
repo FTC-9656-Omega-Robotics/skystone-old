@@ -22,8 +22,7 @@ public class PushWaffle extends LinearOpMode {
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
-        robot.rightGripper.setPosition(.33);
-        robot.leftGripper.setPosition(.6);
+        robot.centerGripper.setPosition(.51);
 
         motionMethods.moveMotionProfile(5,1);
         motionMethods.turnUsingPIDVoltageFieldCentric(90,.5);

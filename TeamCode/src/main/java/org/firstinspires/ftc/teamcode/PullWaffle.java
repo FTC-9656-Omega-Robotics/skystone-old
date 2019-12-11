@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="pullwaffle")
-public class AutoBase extends LinearOpMode{
+public class PullWaffle extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public double robotSpeed = 0.45;
     OmegaBot robot;
@@ -23,8 +23,49 @@ public class AutoBase extends LinearOpMode{
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
-        robot.rightGripper.setPosition(.33);
-        robot.leftGripper.setPosition(.6);
+
+        robot.arm.setTargetPosition(-250);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(.5);
+        sleep(500);
+        robot.leftIntake.setPower(-1);
+        robot.rightIntake.setPower(1);
+
+        motionMethods.moveMotionProfile(38,1);
+        sleep(500);
+
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfile(36,1);
+        robot.drivetrain.reverseDirection();
+
+        motionMethods.turnUsingPIDVoltageFieldCentric(270,.5);
+        motionMethods.moveMotionProfile(60, 1);
+
+        motionMethods.turnUsingPIDVoltageFieldCentric(270,.5);
+        robot.leftIntake.setPower(.1);
+        robot.rightIntake.setPower(-.1);
+        sleep(250);
+        robot.leftIntake.setPower(0);
+        robot.rightIntake.setPower(0);
+        motionMethods.turnUsingPIDVoltageFieldCentric(180,.5);
+
+
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfile(30,1);
+        robot.drivetrain.reverseDirection();
+
+        robot.centerGripper.setPosition(1.00);
+        sleep(250);
+        motionMethods.turnUsingPIDVoltageFieldCentric(180,.5);
+        motionMethods.moveMotionProfile(36,1);
+        robot.centerGripper.setPosition(.51);
+
+        motionMethods.turnUsingPIDVoltageFieldCentric(180,.5);
+        motionMethods.strafe(0,1.5,1);
+
+        /*
+        robot.centerGripper.setPosition(.51);
 
         motionMethods.turnUsingPIDVoltageFieldCentric(90,.5);
 
@@ -44,10 +85,10 @@ public class AutoBase extends LinearOpMode{
         motionMethods.movePID(24,.25);
             robot.drivetrain.reverseDirection();
 
-        robot.rightGripper.setPosition(1);
-        robot.leftGripper.setPosition(0);
+        robot.centerGripper.setPosition(0.93);
         sleep(1000);
         motionMethods.moveMotionProfile(8,1);
+        */
 
 
         /*robot.frontRight.setPower(1);

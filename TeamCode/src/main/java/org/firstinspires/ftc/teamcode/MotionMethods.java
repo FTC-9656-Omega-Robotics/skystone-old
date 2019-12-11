@@ -19,7 +19,7 @@ public class MotionMethods {
     }
 
     public void moveMotionProfile(double inches, double power){//power is between 0 and 1
-        double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
+        double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 * pi is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
         double macAcc = maxVel / 1300; //1300 is the number of milliseconds it takes to accelerate to full speed
         MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
         double[] motionProfile = generator.generateProfile(inches);
@@ -114,7 +114,7 @@ public class MotionMethods {
         robot.drivetrain.setRunMode(original);
     }
 
-    public void strafe(double heading, double distance, double velocity){
+    public void strafe(double heading, double time, double velocity){
         double moveGain = .02;
         double turnGain = .01;
         double right = Math.cos(Math.toRadians(heading));
@@ -125,21 +125,17 @@ public class MotionMethods {
         int[] encoderCounts = {robot.frontLeft.getCurrentPosition(),robot.frontRight.getCurrentPosition(),robot.backLeft.getCurrentPosition(),robot.backRight.getCurrentPosition()};
         ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         double currTime = runtime.milliseconds();
-        while (opMode.opModeIsActive() && distance > 0){
+        while (opMode.opModeIsActive() && runtime.milliseconds() < time * 1000){
             double timeChange = runtime.milliseconds() - currTime;
             currTime = runtime.milliseconds();
-            distance--;//find a better way to do this w encoder counts
             double clockwise =  robot.getAngle() - robotHeading;
             clockwise *= turnGain;
             /**
-            double temp = forward * Math.cos(Math.toRadians(robotHeading)) - right * Math.sin(Math.toRadians(robotHeading));
-            right = forward * Math.sin(Math.toRadians(robotHeading)) + right * Math.cos(Math.toRadians(robotHeading));
-            forward = temp * moveGain * distance;
-            right = right * moveGain * distance;
+             double temp = forward * Math.cos(Math.toRadians(robotHeading)) - right * Math.sin(Math.toRadians(robotHeading));
+             right = forward * Math.sin(Math.toRadians(robotHeading)) + right * Math.cos(Math.toRadians(robotHeading));
+             forward = temp * moveGain * distance;
+             right = right * moveGain * distance;
              **/
-
-            right  = right * moveGain * distance;
-            forward = forward * moveGain * distance;
 
             double front_left = forward + clockwise + right;
             double front_right = forward - clockwise -right;

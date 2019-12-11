@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -29,7 +30,7 @@ public class OmegaBot {
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
-    public DcMotor arm;
+    public DcMotorEx arm;
     public DcMotor extension;
     public DcMotor leftIntake;
     public DcMotor rightIntake;
@@ -37,8 +38,7 @@ public class OmegaBot {
     //servos we want
     public Servo pivot;
     public Servo blockGripper;
-    public Servo leftGripper;
-    public Servo rightGripper;
+    public Servo centerGripper;
 
     DcMotor.RunMode myRunMode = DcMotor.RunMode.RUN_USING_ENCODER;
     public OmegaDriveTrain drivetrain;
@@ -66,15 +66,14 @@ public class OmegaBot {
         frontRight = hardwareMap.get(DcMotor.class, "front_right");
         backLeft = hardwareMap.get(DcMotor.class, "back_left");
         backRight = hardwareMap.get(DcMotor.class, "back_right");
-        arm = hardwareMap.get(DcMotor.class, "arm");
+        arm = hardwareMap.get(DcMotorEx.class, "arm");
         //extension = hardwareMap.get(DcMotor.class, "extension");
         leftIntake = hardwareMap.get(DcMotor.class, "left_intake");
         rightIntake = hardwareMap.get(DcMotor.class, "right_intake");
 
         pivot = hardwareMap.get(Servo.class, "pivot");
         blockGripper = hardwareMap.get(Servo.class, "block_gripper");
-        leftGripper = hardwareMap.get(Servo.class, "left_gripper");
-        rightGripper = hardwareMap.get(Servo.class, "right_gripper");
+        centerGripper = hardwareMap.get(Servo.class, "center_gripper");
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu1".
@@ -107,6 +106,11 @@ public class OmegaBot {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         drivetrain = new OmegaDriveTrain(frontLeft, frontRight, backLeft, backRight);
         drivetrain.setRunMode(myRunMode);
