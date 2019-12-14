@@ -98,7 +98,8 @@ public class MotionMethods {
         double targetHeading = degrees;
         int count = 0;
         ElapsedTime runtime = new ElapsedTime();
-        while (opMode.opModeIsActive() && runtime.seconds() < robot.turnTimeLimit) {
+        double timeLimit = 0.015 * Math.abs(robot.getAngle() - degrees);
+        while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
             velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
             telemetry.addData("Count", count);
             telemetry.addData("Calculated velocity [-1.0, 1/0]", robot.turnPID.getDiagnosticCalculatedPower() / 12.0);

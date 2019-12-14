@@ -66,12 +66,12 @@ public class LinearTeleop extends LinearOpMode {
     }
 
     public void armProcess(){
-        if(gamepad2.a){
+        if(gamepad2.a && armPos > -1700){
             armPos -= 5;
             //robot.arm.setPower(.75);
             //moveArm(-30);
         }
-        else if(gamepad2.b){
+        else if(gamepad2.b && armPos < -100){
             armPos += 5;
             //moveArm(30);
             //robot.arm.setPower(-.75);
