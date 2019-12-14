@@ -73,17 +73,20 @@ public class BlueFarSide extends LinearOpMode {
          */
         phoneCam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
+        // number of inches the robot strafes back depending
+        // on the position of the skystone closest to the Skybridge
         double back = 0;
         double turn = 0;
         double strafe = 0;
-        double strafe2 = 0;
+        //All comments comment above what is being commented
 
         while (!isStopRequested() && !opModeIsActive()) {
             xPosition = skyStoneDetector.foundRectangle().x;
             yPosition = skyStoneDetector.foundRectangle().y;
 
             if (xPosition >= 100.0) { //TODO Tune these numbers
-                skystonePosition= "right";
+                skystonePosition = "right";
+                back = 2;
                 strafe = 1;
             } else if (xPosition > 50) {
                 skystonePosition = "center";
@@ -102,6 +105,7 @@ public class BlueFarSide extends LinearOpMode {
         }
         waitForStart();
 
+        // set initial values for arm, block gripper, pivot, and intakes
         robot.arm.setTargetPosition(-400);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
@@ -111,18 +115,19 @@ public class BlueFarSide extends LinearOpMode {
         robot.leftIntake.setPower(-1);
         robot.rightIntake.setPower(1);
 
+        // strafe backward and into the row of stones
         robot.drivetrain.reverseDirection();
         motionMethods.moveMotionProfile(back,1);
         robot.drivetrain.reverseDirection();
-        motionMethods.strafe(180,strafe, .75);
-        motionMethods.turnUsingPIDVoltageFieldCentric(turn, .5);
-        motionMethods.strafe(0, strafe2, .75);
+        motionMethods.strafe(180, strafe, .75);
         motionMethods.moveMotionProfile(7,1);
         sleep(500);
+
+        // intake the skystone closest to the skybridge
         robot.arm.setTargetPosition(-100);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        robot.blockGripper.setPosition(0.3);
+        robot.blockGripper.setPosition(0.2);
         robot.leftIntake.setPower(0);
         robot.rightIntake.setPower(0);
         sleep(500);
@@ -131,48 +136,78 @@ public class BlueFarSide extends LinearOpMode {
         robot.arm.setPower(.5);
         motionMethods.moveMotionProfile(back, 1);
 
+        // turns left to face red side
         motionMethods.turnUsingPIDVoltageFieldCentric(90,.5);
+
+        // move back toward blue wall
         robot.drivetrain.reverseDirection();
         motionMethods.moveMotionProfile(16, 1);
         robot.drivetrain.reverseDirection();
 
+        // turn right to return to original angle (forward would be parallel to wall)
         motionMethods.turnUsingPIDVoltageFieldCentric(0, .5);
+
+       // moves towards foundation/building zone
         motionMethods.moveMotionProfile(54, 1);
 
+        // corrects the angle (using the gyroscope)
         motionMethods.turnUsingPIDVoltageFieldCentric(0, .5);
         sleep(250);
+
+        //turn right to face blue wall (robot centric)
         motionMethods.turnUsingPIDVoltageFieldCentric(-90, .5);
 
-
+        //back up to retrieve the waffle pan
         robot.drivetrain.reverseDirection();
         motionMethods.moveMotionProfile(8, 1);
         robot.drivetrain.reverseDirection();
+        //grippers grip the waffle pan
 
         robot.centerGripper.setPosition(1.00);
-        sleep(250);
+        //arm moves down and drops the brick
         robot.arm.setTargetPosition(-1700);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        motionMethods.moveMotionProfile(39,1);
-        robot.centerGripper.setPosition(.51);
+        sleep(500);
+        //let go of brick
         robot.blockGripper.setPosition(.75);
-        robot.arm.setTargetPosition(-200);
+        motionMethods.moveMotionProfile(39,1);
+        robot.arm.setTargetPosition(-1500);
+        sleep(250);
+        robot.centerGripper.setPosition(.51);
+        //we wait a few seconds before moving the arm up
+        sleep(500);
+        robot.arm.setTargetPosition(-1000);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
+        //turns to face quarry
 
         motionMethods.turnUsingPIDVoltageFieldCentric(-90, .5);
         motionMethods.moveMotionProfile(25, 1);
         robot.centerGripper.setPosition(.51);
+        //corrects for position
 
         motionMethods.turnUsingPIDVoltageFieldCentric(-90, .5);
+        //strafes right
         motionMethods.strafe(0, .75, 1);
 
+        //corrects position before reversing
         motionMethods.turnUsingPIDVoltageFieldCentric(-90, .5);
         robot.drivetrain.reverseDirection();
         motionMethods.moveMotionProfile(14, 1);
+        sleep(500);
+        motionMethods.turnUsingPIDVoltageFieldCentric(-90,.5);
         robot.drivetrain.reverseDirection();
+        robot.arm.setTargetPosition(-200);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(.5);
+
+
+
 
         motionMethods.strafe(0, .5, 1);
+        //another correction for angle
+        motionMethods.turnUsingPIDVoltageFieldCentric(-90,.5);
 
         runtime.reset();
     }
