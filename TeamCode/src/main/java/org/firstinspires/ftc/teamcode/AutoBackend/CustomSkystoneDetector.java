@@ -43,7 +43,7 @@ public class CustomSkystoneDetector extends DogeCVDetector {
     @Override
     public Mat process(Mat input) {
         input.copyTo(displayMat);
-        Rect rectCrop = new Rect(100,0,220,240);
+        Rect rectCrop = new Rect(150,140,170,100);
         input = input.submat(rectCrop);
         input.copyTo(yellowMask);
         input.copyTo(rawImage);

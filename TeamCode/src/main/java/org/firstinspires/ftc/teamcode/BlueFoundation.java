@@ -24,9 +24,15 @@ public class BlueFoundation extends LinearOpMode{
 
         waitForStart();
 
-
-
-
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfile(33,1);
+        robot.drivetrain.reverseDirection();
+        motionMethods.turnUsingPIDVoltageFieldCentric(0, .5);
+        robot.centerGripper.setPosition(1);
+        motionMethods.moveMotionProfile(33,1);
+        robot.centerGripper.setPosition(.51);
+        motionMethods.turnUsingPIDVoltageFieldCentric(0, .5);
+        motionMethods.strafe(0,1,1);
 
         //GYRO SETUP
         runtime.reset();

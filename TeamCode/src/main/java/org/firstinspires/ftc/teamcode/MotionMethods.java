@@ -120,7 +120,7 @@ public class MotionMethods {
 
     public void strafe(double heading, double time, double velocity){
         double moveGain = .02;
-        double turnGain = .01;
+        double turnGain = .05;
         double right = Math.cos(Math.toRadians(heading));
         double forward = Math.sin(Math.toRadians(heading));
         telemetry.addData("heading", heading);
@@ -167,5 +167,18 @@ public class MotionMethods {
             robot.backLeft.setPower(rear_left);
             robot.backRight.setPower(rear_right);
         }
+    }
+
+    public void strafeLeft(double inches, double power){
+        double ticksPerInch = 537.6/(3.937 * Math.PI);
+        inches *= 1.25;
+        robot.frontLeft.setTargetPosition((int) (robot.frontLeft.getCurrentPosition() - inches * ticksPerInch));
+        robot.frontRight.setTargetPosition((int) (robot.frontRight.getCurrentPosition() + inches * ticksPerInch));
+        robot.backLeft.setTargetPosition((int) (robot.backLeft.getCurrentPosition() + inches * ticksPerInch));
+        robot.backRight.setTargetPosition((int) (robot.backRight.getCurrentPosition() - inches * ticksPerInch));
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.drivetrain.setVelocity(power);
+        while(robot.drivetrain.isPositioning());
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
