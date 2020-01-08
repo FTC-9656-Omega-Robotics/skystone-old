@@ -79,6 +79,8 @@ public class RedFarSide extends LinearOpMode {
         double back = 0;
         //All comments comment above what is being commented
 
+        waitForStart();
+
         while (!isStopRequested() && !opModeIsActive()) {
             xPosition = skyStoneDetector.foundRectangle().x;
             yPosition = skyStoneDetector.foundRectangle().y;
@@ -99,7 +101,6 @@ public class RedFarSide extends LinearOpMode {
             telemetry.addData("SkyStone Pos", skystonePosition);
             telemetry.update();
         }
-        waitForStart();
 
         // set initial values for arm, block gripper, pivot, and intakes
         robot.arm.setTargetPosition(-400);

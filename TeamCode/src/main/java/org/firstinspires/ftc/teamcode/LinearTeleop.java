@@ -27,7 +27,7 @@ public class LinearTeleop extends LinearOpMode {
             intakeProcessIn();
             intakeProcessOut();
             foundationGrippers();
-            flagWave();
+            //flagWave();
             telemetry.addData("armPos",robot.arm.getCurrentPosition());
             telemetry.update();
         }
@@ -60,6 +60,7 @@ public class LinearTeleop extends LinearOpMode {
     public void servoProcess(){
         if(gamepad2.x){
             robot.pivot.setPosition(0.62);
+
         }else if(gamepad2.y){
             robot.pivot.setPosition(.96);
         }

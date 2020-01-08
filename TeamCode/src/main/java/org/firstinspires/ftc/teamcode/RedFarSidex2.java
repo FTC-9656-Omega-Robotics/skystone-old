@@ -76,22 +76,30 @@ public class RedFarSidex2 extends LinearOpMode {
 
         // number of inches the robot strafes back depending
         // on the position of the skystone closest to the Skybridge
+        double front= 0;
         double back = 0;
+        double intakeAngle = 0;
         //All comments comment above what is being commented
 
         while (!isStopRequested() && !opModeIsActive()) {
             xPosition = skyStoneDetector.foundRectangle().x;
             yPosition = skyStoneDetector.foundRectangle().y;
 
-            if (xPosition >= 80) { //TODO Tune these numbers
+            if (xPosition >= 75) { //TODO Tune these numbers
                 skystonePosition = "right";
-                back = 4;
-            } else if (xPosition > 2) {//x = 12
-                skystonePosition = "center";
                 back = 0;
+                front = 0;
+                intakeAngle = 70;
+            } else if (xPosition > 10) {//x = 12
+                skystonePosition = "center";
+                back = 14;
+                front = 4;
+                intakeAngle = 110;
             } else {
                 skystonePosition = "left";
-                back = 10;
+                back = 11;
+                front = 8;
+                intakeAngle = 110;
             }
 
             telemetry.addData("xPos", xPosition);
@@ -111,27 +119,63 @@ public class RedFarSidex2 extends LinearOpMode {
         robot.leftIntake.setPower(-1);
         robot.rightIntake.setPower(1);
 
-        motionMethods.strafe(180, .4, 1);
+
+        motionMethods.strafe(180, .2, 1);
 
         //turns to angle and moves
         motionMethods.moveMotionProfile(back, 1);
-        motionMethods.turnUsingPIDVoltageFieldCentric(110, .5);
+        motionMethods.turnUsingPIDVoltageFieldCentric(intakeAngle, .5);
         motionMethods.moveMotionProfile(28, 1);
 
-        robot.arm.setTargetPosition(0);
+        robot.arm.setTargetPosition(10);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        robot.blockGripper.setPosition(0.2);
+        robot.blockGripper.setPosition(0.1);
         robot.leftIntake.setPower(0);
         robot.rightIntake.setPower(0);
         sleep(500);
-
-        //faces red wall and strafes to building
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        robot.arm.setTargetPosition(-110);
+        robot.arm.setTargetPosition(-150);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        motionMethods.strafe(0, 1, 1);
-        motionMethods.moveMotionProfile(60,1);
+
+        //faces parallel to red wall and moves to building site
+        motionMethods.turnUsingPIDVoltageFieldCentric(-90,1);
+        motionMethods.moveMotionProfile(10, 1);
+
+        //corrects angle before going to building site
+        motionMethods.turnUsingPIDVoltageFieldCentric(0, 1);
+        motionMethods.moveMotionProfile(front, 1);
+        motionMethods.moveMotionProfile(55,1);
+
+        //turns and picks up foundation
+        motionMethods.turnUsingPIDVoltageFieldCentric(-90, 1);
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfile(12,1);
+        robot.drivetrain.reverseDirection();
+
+        robot.centerGripper.setPosition(1.00);
+        //arm moves down and drops the brick
+        robot.arm.setTargetPosition(-1700);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(.5);
+        sleep(500);
+        //let go of brick
+        robot.blockGripper.setPosition(.75);
+        sleep(750);
+        robot.arm.setTargetPosition(-200);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(.5);
+        motionMethods.moveMotionProfile(32,1);
+
+        //turns and places into area
+        motionMethods.turnUsingPIDVoltageFieldCentric(-180, .25);
+        robot.centerGripper.setPosition(.51);
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfile(8, 1);
+        robot.drivetrain.reverseDirection();
+        motionMethods.turnUsingPIDVoltageFieldCentric(-180, 1);
+        motionMethods.moveMotionProfile(20, 1);
+
+
     }
 }
