@@ -89,10 +89,10 @@ public class RedFarSidex2 extends LinearOpMode {
                 skystonePosition = "right";
                 back = 0;
                 front = 0;
-                intakeAngle = 70;
+                intakeAngle = 65;
             } else if (xPosition > 10) {//x = 12
                 skystonePosition = "center";
-                back = 14;
+                back = 16;
                 front = 4;
                 intakeAngle = 110;
             } else {
