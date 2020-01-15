@@ -36,6 +36,7 @@ public class OmegaBot {
     public Servo leftGripper;
     public Servo rightGripper;
 
+
     DcMotor.RunMode myRunMode = DcMotor.RunMode.RUN_USING_ENCODER;
     public OmegaDriveTrain drivetrain;
 

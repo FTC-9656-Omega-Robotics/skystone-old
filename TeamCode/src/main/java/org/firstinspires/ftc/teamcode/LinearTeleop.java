@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+6fcpackage org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -86,8 +86,8 @@ public class LinearTeleop extends LinearOpMode {
     }
 
     public void drivetrainProcess(){
-        double forward = gamepad1.left_stick_y;
-        double right = -gamepad1.left_stick_x;
+        double forward = -gamepad1.left_stick_y;
+        double right = gamepad1.left_stick_x;
         double clockwise = gamepad1.right_stick_x *.75;
         //double temp = forward * Math.cos(Math.toRadians(robot.getAngle())) - right * Math.sin(Math.toRadians(robot.getAngle()));
         //right = forward * Math.sin(Math.toRadians(robot.getAngle())) + right * Math.cos(Math.toRadians(robot.getAngle()));
