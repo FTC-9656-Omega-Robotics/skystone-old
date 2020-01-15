@@ -39,7 +39,7 @@ public class OmegaPID{
         double error = desiredAngle - currentAngle;
         if(Math.abs(error) > threshold) {
             iError += error;
-            dError = error - prevError;
+            dError = error - prevError;//a negative number bc current error shd be less than previous error
             prevError = error;
             double power = (error * pGain) + (dError * dGain) + (iError * iGain);
             diagnosticCalculatedPower = power;

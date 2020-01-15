@@ -19,7 +19,10 @@ public class MotionMethods {
     }
 
     public void moveMotionProfile(double inches, double power){//power is between 0 and 1
-        double maxVel = 312 * 3.937 / 60000; // 312 is the rotations per minute, 3.937 is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
+        if(inches == 0){
+            return;
+        }
+        double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 * pi is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
         double macAcc = maxVel / 1300; //1300 is the number of milliseconds it takes to accelerate to full speed
         MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
         double[] motionProfile = generator.generateProfile(inches);
@@ -37,6 +40,9 @@ public class MotionMethods {
                 robot.backRight.setPower(motionProfile[ms] / maxVel - adjust);
                 //robot.drivetrain.setVelocity(motionProfile[(int) runtime.milliseconds()] / maxVel);//TODO: use the distance profile + encoders to pid up in dis bicth
             }
+
+
+
         }
         robot.drivetrain.setVelocity(0);
     }
@@ -57,6 +63,14 @@ public class MotionMethods {
         robot.drivetrain.setRunMode(originalMode);
     }
 
+    /**
+     * This method makes the robot turn counterclockwise based on gyro values and PID
+     * Velocity is always positive. Set neg degrees for clockwise turn
+     * pwr in setPower(pwr) is a fraction [-1.0, 1.0] of 12V
+     *
+     * @param degrees  desired angle in deg
+     * @param velocity max velocity
+     */
     public void turnUsingPIDVoltage(double degrees, double velocity) {
         DcMotor.RunMode original = robot.frontLeft.getMode(); //assume all drive motors r the same runmode
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -87,7 +101,8 @@ public class MotionMethods {
         double targetHeading = degrees;
         int count = 0;
         ElapsedTime runtime = new ElapsedTime();
-        while (opMode.opModeIsActive() && runtime.seconds() < robot.turnTimeLimit) {
+        double timeLimit = 0.015 * Math.abs(robot.getAngle() - degrees);
+        while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
             velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
             telemetry.addData("Count", count);
             telemetry.addData("Calculated velocity [-1.0, 1/0]", robot.turnPID.getDiagnosticCalculatedPower() / 12.0);
@@ -103,9 +118,9 @@ public class MotionMethods {
         robot.drivetrain.setRunMode(original);
     }
 
-    public void strafe(double heading, double distance, double velocity){
+    public void strafe(double heading, double time, double velocity){
         double moveGain = .02;
-        double turnGain = .01;
+        double turnGain = .05;
         double right = Math.cos(Math.toRadians(heading));
         double forward = Math.sin(Math.toRadians(heading));
         telemetry.addData("heading", heading);
@@ -114,21 +129,17 @@ public class MotionMethods {
         int[] encoderCounts = {robot.frontLeft.getCurrentPosition(),robot.frontRight.getCurrentPosition(),robot.backLeft.getCurrentPosition(),robot.backRight.getCurrentPosition()};
         ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         double currTime = runtime.milliseconds();
-        while (opMode.opModeIsActive() && distance > 0){
+        while (opMode.opModeIsActive() && runtime.milliseconds() < time * 1000){
             double timeChange = runtime.milliseconds() - currTime;
             currTime = runtime.milliseconds();
-            distance--;//find a better way to do this w encoder counts
             double clockwise =  robot.getAngle() - robotHeading;
             clockwise *= turnGain;
             /**
-            double temp = forward * Math.cos(Math.toRadians(robotHeading)) - right * Math.sin(Math.toRadians(robotHeading));
-            right = forward * Math.sin(Math.toRadians(robotHeading)) + right * Math.cos(Math.toRadians(robotHeading));
-            forward = temp * moveGain * distance;
-            right = right * moveGain * distance;
+             double temp = forward * Math.cos(Math.toRadians(robotHeading)) - right * Math.sin(Math.toRadians(robotHeading));
+             right = forward * Math.sin(Math.toRadians(robotHeading)) + right * Math.cos(Math.toRadians(robotHeading));
+             forward = temp * moveGain * distance;
+             right = right * moveGain * distance;
              **/
-
-            right  = right * moveGain * distance;
-            forward = forward * moveGain * distance;
 
             double front_left = forward + clockwise + right;
             double front_right = forward - clockwise -right;
@@ -156,5 +167,18 @@ public class MotionMethods {
             robot.backLeft.setPower(rear_left);
             robot.backRight.setPower(rear_right);
         }
+    }
+
+    public void strafeLeft(double inches, double power){
+        double ticksPerInch = 537.6/(3.937 * Math.PI);
+        inches *= 1.25;
+        robot.frontLeft.setTargetPosition((int) (robot.frontLeft.getCurrentPosition() - inches * ticksPerInch));
+        robot.frontRight.setTargetPosition((int) (robot.frontRight.getCurrentPosition() + inches * ticksPerInch));
+        robot.backLeft.setTargetPosition((int) (robot.backLeft.getCurrentPosition() + inches * ticksPerInch));
+        robot.backRight.setTargetPosition((int) (robot.backRight.getCurrentPosition() - inches * ticksPerInch));
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.drivetrain.setVelocity(power);
+        while(robot.drivetrain.isPositioning());
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
