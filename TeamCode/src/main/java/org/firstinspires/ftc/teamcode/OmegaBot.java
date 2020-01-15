@@ -41,6 +41,7 @@ public class OmegaBot {
     public Servo centerGripper;
     public Servo cap;
     public Servo rightGripper;
+    public Servo elbowGripper;
 
 
     DcMotor.RunMode myRunMode = DcMotor.RunMode.RUN_USING_ENCODER;
@@ -79,6 +80,7 @@ public class OmegaBot {
         centerGripper = hardwareMap.get(Servo.class, "center_gripper");
         cap = hardwareMap.get(Servo.class, "cap");
         rightGripper = hardwareMap.get(Servo.class, "left_gripper");
+        elbowGripper = hardwareMap.get(Servo.class, "elbow_gripper");//port number 5
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu1".
