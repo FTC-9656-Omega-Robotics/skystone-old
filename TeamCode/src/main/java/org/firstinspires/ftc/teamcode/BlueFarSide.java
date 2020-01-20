@@ -163,18 +163,25 @@ public class BlueFarSide extends LinearOpMode {
         robot.drivetrain.reverseDirection();
         //grippers grip the waffle pan
 
+        motionMethods.moveMotionProfile(39,1);
         robot.centerGripper.setPosition(1.00);
+        
         //arm moves down and drops the brick
         robot.arm.setTargetPosition(-1700);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
         sleep(500);
+        //arm moves down and drops the brick
+        robot.arm.setTargetPosition(-1700);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(.5);
+
         //let go of brick
         robot.blockGripper.setPosition(.75);
-        motionMethods.moveMotionProfile(39,1);
         robot.arm.setTargetPosition(-1500);
         sleep(250);
         robot.centerGripper.setPosition(.51);
+
         //we wait a few seconds before moving the arm up
         sleep(500);
         robot.arm.setTargetPosition(-1000);
