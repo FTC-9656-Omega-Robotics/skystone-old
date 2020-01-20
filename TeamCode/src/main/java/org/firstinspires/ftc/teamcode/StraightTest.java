@@ -19,7 +19,10 @@ public class StraightTest extends LinearOpMode {
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
-
-        motionMethods.strafe(0, 200, 1);
+        robot.arm.setTargetPosition(-400);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(.5);
+        //teleop arm up
+        motionMethods.moveMotionProfile(50,1);
     }
 }

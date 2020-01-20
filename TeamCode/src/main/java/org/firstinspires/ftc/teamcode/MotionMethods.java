@@ -33,11 +33,40 @@ public class MotionMethods {
         while(runtime.milliseconds() < motionProfile.length && opMode.opModeIsActive()){
             int ms = (int) runtime.milliseconds();
             if (ms < motionProfile.length) {
-                double adjust = 0;//0.04 * (robot.getAngle()-heading);
+                double adjust = 0.035 * (robot.getAngle()-heading);
                 robot.frontLeft.setPower(motionProfile[ms] / maxVel + adjust);
                 robot.backLeft.setPower(motionProfile[ms] / maxVel + adjust);
                 robot.frontRight.setPower(motionProfile[ms] / maxVel - adjust);
                 robot.backRight.setPower(motionProfile[ms] / maxVel - adjust);
+                //robot.drivetrain.setVelocity(motionProfile[(int) runtime.milliseconds()] / maxVel);//TODO: use the distance profile + encoders to pid up in dis bicth
+            }
+
+
+
+        }
+        robot.drivetrain.setVelocity(0);
+    }
+
+    public void moveMotionProfileReverse(double inches, double power){//power is between 0 and 1
+        if(inches == 0){
+            return;
+        }
+        double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 * pi is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
+        double macAcc = maxVel / 1300; //1300 is the number of milliseconds it takes to accelerate to full speed
+        MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
+        double[] motionProfile = generator.generateProfile(inches);
+        double[] distanceProfile = generator.generateDistanceProfile(motionProfile);
+        ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        runtime.reset();
+        double heading = robot.getAngle();
+        while(runtime.milliseconds() < motionProfile.length && opMode.opModeIsActive()){
+            int ms = (int) runtime.milliseconds();
+            if (ms < motionProfile.length) {
+                double adjust = 0.035 * (robot.getAngle()-heading);
+                robot.frontLeft.setPower(motionProfile[ms] / maxVel - adjust);
+                robot.backLeft.setPower(motionProfile[ms] / maxVel - adjust);
+                robot.frontRight.setPower(motionProfile[ms] / maxVel + adjust);
+                robot.backRight.setPower(motionProfile[ms] / maxVel + adjust);
                 //robot.drivetrain.setVelocity(motionProfile[(int) runtime.milliseconds()] / maxVel);//TODO: use the distance profile + encoders to pid up in dis bicth
             }
 
@@ -120,7 +149,7 @@ public class MotionMethods {
 
     public void strafe(double heading, double time, double velocity){
         double moveGain = .02;
-        double turnGain = .01;
+        double turnGain = .08;
         double right = Math.cos(Math.toRadians(heading));
         double forward = Math.sin(Math.toRadians(heading));
         telemetry.addData("heading", heading);
@@ -167,5 +196,18 @@ public class MotionMethods {
             robot.backLeft.setPower(rear_left);
             robot.backRight.setPower(rear_right);
         }
+    }
+
+    public void strafeLeft(double inches, double power){
+        double ticksPerInch = 537.6/(3.937 * Math.PI);
+        inches *= 1.25;
+        robot.frontLeft.setTargetPosition((int) (robot.frontLeft.getCurrentPosition() - inches * ticksPerInch));
+        robot.frontRight.setTargetPosition((int) (robot.frontRight.getCurrentPosition() + inches * ticksPerInch));
+        robot.backLeft.setTargetPosition((int) (robot.backLeft.getCurrentPosition() + inches * ticksPerInch));
+        robot.backRight.setTargetPosition((int) (robot.backRight.getCurrentPosition() - inches * ticksPerInch));
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.drivetrain.setVelocity(power);
+        while(robot.drivetrain.isPositioning());
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

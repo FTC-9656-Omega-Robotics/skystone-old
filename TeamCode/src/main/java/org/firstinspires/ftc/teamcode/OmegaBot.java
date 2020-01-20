@@ -39,6 +39,10 @@ public class OmegaBot {
     public Servo pivot;
     public Servo blockGripper;
     public Servo centerGripper;
+    public Servo cap;
+    public Servo rightGripper;//0.33 up, 0 down
+    public Servo elbowGripper;//0 open, 0.5 closed
+
 
     DcMotor.RunMode myRunMode = DcMotor.RunMode.RUN_USING_ENCODER;
     public OmegaDriveTrain drivetrain;
@@ -74,6 +78,9 @@ public class OmegaBot {
         pivot = hardwareMap.get(Servo.class, "pivot");
         blockGripper = hardwareMap.get(Servo.class, "block_gripper");
         centerGripper = hardwareMap.get(Servo.class, "center_gripper");
+        cap = hardwareMap.get(Servo.class, "cap");
+        rightGripper = hardwareMap.get(Servo.class, "left_gripper");
+        elbowGripper = hardwareMap.get(Servo.class, "elbow_gripper");//port number 5
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu1".
@@ -107,8 +114,6 @@ public class OmegaBot {
         backLeft.setPower(0);
         backRight.setPower(0);
 
-        arm.setTargetPosition(0);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 

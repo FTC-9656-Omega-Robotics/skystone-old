@@ -10,8 +10,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="Blue Wall Side")
-public class BlueWallSide extends LinearOpMode{
+@Autonomous(name="Red Far Side")
+public class RedFarSidex2 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public double robotSpeed = 0.45;
     OmegaBot robot;
@@ -32,6 +32,7 @@ public class BlueWallSide extends LinearOpMode{
          */
         robot.drivetrain.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
          * In this sample, we're using the phone's internal camera. We pass it a
@@ -73,27 +74,32 @@ public class BlueWallSide extends LinearOpMode{
          */
         phoneCam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
+        // number of inches the robot strafes back depending
+        // on the position of the skystone closest to the Skybridge
+        double front= 0;
         double back = 0;
-        double turn = 0;
-        double strafe = 0;
-        double strafe2 = 0;
+        double intakeAngle = 0;
+        //All comments comment above what is being commented
 
         while (!isStopRequested() && !opModeIsActive()) {
             xPosition = skyStoneDetector.foundRectangle().x;
             yPosition = skyStoneDetector.foundRectangle().y;
 
-            if (xPosition >= 100.0) { //TODO Tune these numbers
-                skystonePosition= "right";
-                strafe = 1;
-            } else if (xPosition > 50) {
+            if (xPosition >= 75) { //TODO Tune these numbers
+                skystonePosition = "right";
+                back = 0;
+                front = 0;
+                intakeAngle = 65;
+            } else if (xPosition > 10) {//x = 12
                 skystonePosition = "center";
-                back = 6;
-                strafe = 1;
+                back = 16;
+                front = 4;
+                intakeAngle = 110;
             } else {
                 skystonePosition = "left";
-                turn = 0;
-                strafe = 1.5;
-                strafe2 = 0;
+                back = 11;
+                front = 8;
+                intakeAngle = 110;
             }
 
             telemetry.addData("xPos", xPosition);
@@ -101,9 +107,9 @@ public class BlueWallSide extends LinearOpMode{
             telemetry.addData("SkyStone Pos", skystonePosition);
             telemetry.update();
         }
-
         waitForStart();
 
+        // set initial values for arm, block gripper, pivot, and intakes
         robot.arm.setTargetPosition(-400);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
@@ -113,137 +119,63 @@ public class BlueWallSide extends LinearOpMode{
         robot.leftIntake.setPower(-1);
         robot.rightIntake.setPower(1);
 
-        robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfile(back,1);
-        robot.drivetrain.reverseDirection();
-        motionMethods.strafe(180,strafe, .75);
-        motionMethods.turnUsingPIDVoltageFieldCentric(turn, .5);
-        motionMethods.strafe(0, strafe2, .75);
-        motionMethods.moveMotionProfile(7,1);
-        sleep(500);
-        robot.arm.setTargetPosition(-100);
+
+        motionMethods.strafe(180, .2, 1);
+
+        //turns to angle and moves
+        motionMethods.moveMotionProfile(back, 1);
+        motionMethods.turnUsingPIDVoltageFieldCentric(intakeAngle, .5);
+        motionMethods.moveMotionProfile(28, 1);
+
+        robot.arm.setTargetPosition(10);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        robot.blockGripper.setPosition(0.3);
+        robot.blockGripper.setPosition(0.1);
         robot.leftIntake.setPower(0);
         robot.rightIntake.setPower(0);
         sleep(500);
-        robot.arm.setTargetPosition(-210);
+        robot.arm.setTargetPosition(-150);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        motionMethods.moveMotionProfile(back, 1);
 
-        motionMethods.turnUsingPIDVoltageFieldCentric(90,.5);
+        //faces parallel to red wall and moves to building site
+        motionMethods.turnUsingPIDVoltageFieldCentric(-90,1);
+        motionMethods.moveMotionProfile(10, 1);
+
+        //corrects angle before going to building site
+        motionMethods.turnUsingPIDVoltageFieldCentric(0, 1);
+        motionMethods.moveMotionProfile(front, 1);
+        motionMethods.moveMotionProfile(55,1);
+
+        //turns and picks up foundation
+        motionMethods.turnUsingPIDVoltageFieldCentric(-90, 1);
         robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfile(28,1);
-        robot.drivetrain.reverseDirection();
-
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        motionMethods.moveMotionProfile(56, 1);
-
-        motionMethods.turnUsingPIDVoltageFieldCentric(270,.5);
-
-        robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfile(16,1);
+        motionMethods.moveMotionProfile(12,1);
         robot.drivetrain.reverseDirection();
 
         robot.centerGripper.setPosition(1.00);
-        sleep(250);
-        motionMethods.turnUsingPIDVoltageFieldCentric(270,.5);
+        //arm moves down and drops the brick
         robot.arm.setTargetPosition(-1700);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        motionMethods.moveMotionProfile(39,1);
-        robot.centerGripper.setPosition(.51);
+        sleep(500);
+        //let go of brick
         robot.blockGripper.setPosition(.75);
+        sleep(750);
         robot.arm.setTargetPosition(-200);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
+        motionMethods.moveMotionProfile(32,1);
 
-        motionMethods.turnUsingPIDVoltageFieldCentric(270,.5);
-        motionMethods.strafe(0,.9,1);
-
-        /*
+        //turns and places into area
+        motionMethods.turnUsingPIDVoltageFieldCentric(-180, .25);
         robot.centerGripper.setPosition(.51);
-
-        motionMethods.turnUsingPIDVoltageFieldCentric(90,.5);
-
-            robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfile(9,1);
-            robot.drivetrain.reverseDirection();
-
-        motionMethods.turnUsingPIDVoltageFieldCentric(90,.5);
-
-            robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfile(10,1);
-            robot.drivetrain.reverseDirection();
-
-        motionMethods.turnUsingPIDVoltageFieldCentric(180,.5);
-
-            robot.drivetrain.reverseDirection();
-        motionMethods.movePID(24,.25);
-            robot.drivetrain.reverseDirection();
-
-        robot.centerGripper.setPosition(0.93);
-        sleep(1000);
-        motionMethods.moveMotionProfile(8,1);
-        */
-
-
-        /*robot.frontRight.setPower(1);
-        sleep(3000);
-        robot.frontRight.setPower(0);
-        robot.frontLeft.setPower(1);
-        sleep(3000);
-        robot.frontLeft.setPower(0);
-        robot.backLeft.setPower(1);
-        sleep(3000);
-        robot.backLeft.setPower(0);
-        robot.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.backRight.setPower(1);
-        sleep(3000);
-        robot.backRight.setPower(0);
-        robot.frontRight.setPower(-1);
-        sleep(3000);
-        robot.frontRight.setPower(0);
-        robot.frontLeft.setPower(-1);
-        sleep(3000);
-        robot.frontLeft.setPower(0);
-        robot.backLeft.setPower(-1);
-        sleep(3000);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(-1);
-        sleep(3000);
-        robot.backRight.setPower(0);*/
-
-
-/*
-        //robot.leftIntake.setPower(-1);
-        //robot.rightIntake.setPower(1);
-        //robot.drivetrain.reverseDirection();
-        motionMethods.movePID(32,.5);
-        sleep(1000);
         robot.drivetrain.reverseDirection();
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        motionMethods.movePID(18,.5);
-        sleep(1000);
-        motionMethods.turnUsingPIDVoltageFieldCentric(-90, .5);
-        sleep(500);
+        motionMethods.moveMotionProfile(8, 1);
         robot.drivetrain.reverseDirection();
-        motionMethods.movePID(48,.5);
-        robot.drivetrain.reverseDirection();
-        motionMethods.turnUsingPIDVoltageFieldCentric(-90,.5);
-        //robot.leftIntake.setPower(1);
-        //robot.rightIntake.setPower(-1);
-        sleep(1000);
-        motionMethods.strafe(0,47,.5);
-        sleep(1000);
-        motionMethods.strafe(180,97,.5);
-*/
+        motionMethods.turnUsingPIDVoltageFieldCentric(-180, 1);
+        motionMethods.moveMotionProfile(20, 1);
+//Don't delete this it is Amogh's first code memory.
 
-
-
-        //GYRO SETUP
-        runtime.reset();
     }
 }
