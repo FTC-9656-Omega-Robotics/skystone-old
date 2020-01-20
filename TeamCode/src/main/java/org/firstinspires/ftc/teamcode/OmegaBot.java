@@ -40,8 +40,8 @@ public class OmegaBot {
     public Servo blockGripper;
     public Servo centerGripper;
     public Servo cap;
-    public Servo rightGripper;
-    public Servo elbowGripper;
+    public Servo rightGripper;//0.33 up, 0 down
+    public Servo elbowGripper;//0 open, 0.5 closed
 
 
     DcMotor.RunMode myRunMode = DcMotor.RunMode.RUN_USING_ENCODER;

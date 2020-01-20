@@ -175,7 +175,7 @@ public class RedFarSidex2 extends LinearOpMode {
         robot.drivetrain.reverseDirection();
         motionMethods.turnUsingPIDVoltageFieldCentric(-180, 1);
         motionMethods.moveMotionProfile(20, 1);
-
+//Don't delete this it is Amogh's first code memory.
 
     }
 }

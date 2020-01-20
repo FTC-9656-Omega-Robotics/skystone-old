@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "StraightTest")
-//@Disabled
-public class StraightTest extends LinearOpMode {
+@Autonomous(name = "strafeTest")
+public class strafeTest extends LinearOpMode {
     OmegaBot robot;
+    OmegaPID drivePID;
     MotionMethods motionMethods;
 
     public void runOpMode(){
         robot = new OmegaBot(telemetry, hardwareMap);
+        drivePID = robot.drivePID;
         motionMethods = new MotionMethods(robot, telemetry, this);
 
         robot.drivetrain.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -23,6 +23,8 @@ public class StraightTest extends LinearOpMode {
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
         //teleop arm up
-        motionMethods.moveMotionProfile(50,1);
+        motionMethods.strafe(180, 1, 0.75);
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
+
     }
 }

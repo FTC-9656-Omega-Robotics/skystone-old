@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(name="Red Far Side")
-public class RedFarSide extends LinearOpMode {
+public class SideGripperTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public double robotSpeed = 0.45;
     OmegaBot robot;
