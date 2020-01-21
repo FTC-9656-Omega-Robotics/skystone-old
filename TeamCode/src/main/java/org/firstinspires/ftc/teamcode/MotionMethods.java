@@ -23,7 +23,7 @@ public class MotionMethods {
             return;
         }
         double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 * pi is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
-        double macAcc = maxVel / 1300; //1300 is the number of milliseconds it takes to accelerate to full speed
+        double macAcc = maxVel / 2000; //1300 is the number of milliseconds it takes to accelerate to full speed
         MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
         double[] motionProfile = generator.generateProfile(inches);
         double[] distanceProfile = generator.generateDistanceProfile(motionProfile);
@@ -33,11 +33,42 @@ public class MotionMethods {
         while(runtime.milliseconds() < motionProfile.length && opMode.opModeIsActive()){
             int ms = (int) runtime.milliseconds();
             if (ms < motionProfile.length) {
-                double adjust = 0.035 * (robot.getAngle()-heading);
+                double adjust = 0.04 * (robot.getAngle()-heading);
                 robot.frontLeft.setPower(motionProfile[ms] / maxVel + adjust);
                 robot.backLeft.setPower(motionProfile[ms] / maxVel + adjust);
                 robot.frontRight.setPower(motionProfile[ms] / maxVel - adjust);
                 robot.backRight.setPower(motionProfile[ms] / maxVel - adjust);
+                //robot.drivetrain.setVelocity(motionProfile[(int) runtime.milliseconds()] / maxVel);//TODO: use the distance profile + encoders to pid up in dis bicth
+            }
+
+
+
+        }
+        robot.drivetrain.setVelocity(0);
+    }
+
+    public void moveMotionProfileZeroDegrees(double inches, double power){//power is between 0 and 1
+        if(inches == 0){
+            return;
+        }
+        double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 * pi is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
+        double macAcc = maxVel / 2000; //1300 is the number of milliseconds it takes to accelerate to full speed
+        MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
+        double[] motionProfile = generator.generateProfile(inches);
+        double[] distanceProfile = generator.generateDistanceProfile(motionProfile);
+        ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        runtime.reset();
+        double heading = 0;
+        while(runtime.milliseconds() < motionProfile.length && opMode.opModeIsActive()){
+            int ms = (int) runtime.milliseconds();
+            if (ms < motionProfile.length) {
+                double adjust = 0.04 * (robot.getAngle()-heading);
+                robot.frontLeft.setPower(motionProfile[ms] / maxVel + adjust);
+                robot.backLeft.setPower(motionProfile[ms] / maxVel + adjust);
+                robot.frontRight.setPower(motionProfile[ms] / maxVel - adjust);
+                robot.backRight.setPower(motionProfile[ms] / maxVel - adjust);
+                telemetry.addData("gyro pos", robot.getAngle());
+                telemetry.update();
                 //robot.drivetrain.setVelocity(motionProfile[(int) runtime.milliseconds()] / maxVel);//TODO: use the distance profile + encoders to pid up in dis bicth
             }
 
@@ -52,7 +83,7 @@ public class MotionMethods {
             return;
         }
         double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 * pi is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
-        double macAcc = maxVel / 1300; //1300 is the number of milliseconds it takes to accelerate to full speed
+        double macAcc = maxVel / 2000; //1300 is the number of milliseconds it takes to accelerate to full speed
         MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
         double[] motionProfile = generator.generateProfile(inches);
         double[] distanceProfile = generator.generateDistanceProfile(motionProfile);
@@ -62,7 +93,7 @@ public class MotionMethods {
         while(runtime.milliseconds() < motionProfile.length && opMode.opModeIsActive()){
             int ms = (int) runtime.milliseconds();
             if (ms < motionProfile.length) {
-                double adjust = 0.035 * (robot.getAngle()-heading);
+                double adjust = 0.04 * (robot.getAngle()-heading);
                 robot.frontLeft.setPower(motionProfile[ms] / maxVel - adjust);
                 robot.backLeft.setPower(motionProfile[ms] / maxVel - adjust);
                 robot.frontRight.setPower(motionProfile[ms] / maxVel + adjust);
@@ -130,7 +161,7 @@ public class MotionMethods {
         double targetHeading = degrees;
         int count = 0;
         ElapsedTime runtime = new ElapsedTime();
-        double timeLimit = 0.15 * Math.abs(robot.getAngle() - degrees);
+        double timeLimit = 0.05 * Math.abs(robot.getAngle() - degrees);
         while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
             velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
             telemetry.addData("Count", count);

@@ -23,6 +23,30 @@ public class StraightTest extends LinearOpMode {
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
         //teleop arm up
+
         motionMethods.moveMotionProfile(50,1);
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfileReverse(50,1);
+        robot.drivetrain.reverseDirection();
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        motionMethods.moveMotionProfile(50,1);
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfileReverse(50,1);
+        robot.drivetrain.reverseDirection();
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        motionMethods.moveMotionProfile(50,1);
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfileReverse(50,1);
+        robot.drivetrain.reverseDirection();
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        motionMethods.moveMotionProfile(50,1);
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
+        robot.drivetrain.reverseDirection();
+        motionMethods.moveMotionProfileReverse(50,1);
+        robot.drivetrain.reverseDirection();
+        motionMethods.turnUsingPIDVoltageFieldCentric(0,1);
     }
 }
