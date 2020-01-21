@@ -130,7 +130,7 @@ public class MotionMethods {
         double targetHeading = degrees;
         int count = 0;
         ElapsedTime runtime = new ElapsedTime();
-        double timeLimit = 0.015 * Math.abs(robot.getAngle() - degrees);
+        double timeLimit = 0.15 * Math.abs(robot.getAngle() - degrees);
         while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
             velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
             telemetry.addData("Count", count);
@@ -152,6 +152,7 @@ public class MotionMethods {
         double turnGain = .08;
         double right = Math.cos(Math.toRadians(heading));
         double forward = Math.sin(Math.toRadians(heading));
+        double maxVel = 312 * 3.937 * Math.PI / 60;
         telemetry.addData("heading", heading);
         telemetry.update();
         double robotHeading = robot.getAngle();
@@ -196,6 +197,7 @@ public class MotionMethods {
             robot.backLeft.setPower(rear_left);
             robot.backRight.setPower(rear_right);
         }
+        robot.drivetrain.setVelocity(0);
     }
 
     public void strafeLeft(double inches, double power){

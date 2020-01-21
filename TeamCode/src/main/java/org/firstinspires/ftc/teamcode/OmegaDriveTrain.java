@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class OmegaDriveTrain {
-    DcMotor frontLeft;
-    DcMotor frontRight;
-    DcMotor backLeft;
-    DcMotor backRight;
-    DcMotor[] motors = new DcMotor[4];
+    DcMotorEx frontLeft;
+    DcMotorEx frontRight;
+    DcMotorEx backLeft;
+    DcMotorEx backRight;
+    DcMotorEx[] motors = new DcMotorEx[4];
 
-    public OmegaDriveTrain(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
+    public OmegaDriveTrain(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight) {
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.backLeft = backLeft;
@@ -83,6 +84,12 @@ public class OmegaDriveTrain {
         frontRight.setPower(velocity);
         backLeft.setPower(velocity);
         backRight.setPower(velocity);
+    }
+
+    public void setVelocityPID(double p, double i, double d, double f){
+        for(DcMotorEx motor : motors){
+            motor.setVelocityPIDFCoefficients(p,i,d,f);
+        }
     }
 
     /**

@@ -26,10 +26,10 @@ public class OmegaBot {
     public HardwareMap hardwareMap;
 
     //DC motors we want
-    public DcMotor frontLeft;
-    public DcMotor frontRight;
-    public DcMotor backLeft;
-    public DcMotor backRight;
+    public DcMotorEx frontLeft;
+    public DcMotorEx frontRight;
+    public DcMotorEx backLeft;
+    public DcMotorEx backRight;
     public DcMotorEx arm;
     public DcMotor extension;
     public DcMotor leftIntake;
@@ -66,10 +66,10 @@ public class OmegaBot {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
 
-        frontLeft = hardwareMap.get(DcMotor.class, "front_left");
-        frontRight = hardwareMap.get(DcMotor.class, "front_right");
-        backLeft = hardwareMap.get(DcMotor.class, "back_left");
-        backRight = hardwareMap.get(DcMotor.class, "back_right");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "front_left");
+        frontRight = hardwareMap.get(DcMotorEx.class, "front_right");
+        backLeft = hardwareMap.get(DcMotorEx.class, "back_left");
+        backRight = hardwareMap.get(DcMotorEx.class, "back_right");
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         //extension = hardwareMap.get(DcMotor.class, "extension");
         leftIntake = hardwareMap.get(DcMotor.class, "left_intake");
