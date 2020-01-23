@@ -23,7 +23,7 @@ public class MotionMethods {
             return;
         }
         double maxVel = 312 * 3.937 * Math.PI / 60000; // 312 is the rotations per minute, 3.937 * pi is the inches per rotation (based on wheel circumference), 60000 is the number of milliseconds in a minute
-        double macAcc = maxVel / 2000; //1300 is the number of milliseconds it takes to accelerate to full speed
+        double macAcc = maxVel / 1600; //1300 is the number of milliseconds it takes to accelerate to full speed
         MotionProfileGenerator generator = new MotionProfileGenerator(maxVel * power, macAcc);//multiply by power cuz its a number between 0 and 1 so it scales
         double[] motionProfile = generator.generateProfile(inches);
         double[] distanceProfile = generator.generateDistanceProfile(motionProfile);
@@ -136,13 +136,15 @@ public class MotionMethods {
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double max = 12.0 * velocity;
         double targetHeading = robot.getAngle() + degrees;
+        double timeLimit = 0.01 * Math.abs(robot.getAngle() - degrees);
         int count = 0;
         ElapsedTime runtime = new ElapsedTime();
-        while (opMode.opModeIsActive() && runtime.seconds() < robot.turnTimeLimit) {
+        while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
             velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
             telemetry.addData("Count", count);
             telemetry.addData("Calculated velocity [-1.0, 1/0]", robot.turnPID.getDiagnosticCalculatedPower() / 12.0);
             telemetry.addData("PID power [-1.0, 1.0]", velocity);
+            telemetry.addData("Turning now", count);
             telemetry.update();
             robot.frontLeft.setPower(-velocity);
             robot.backLeft.setPower(-velocity);
@@ -162,6 +164,7 @@ public class MotionMethods {
         int count = 0;
         ElapsedTime runtime = new ElapsedTime();
         double timeLimit = 0.05 * Math.abs(robot.getAngle() - degrees);
+        if(Math.abs(robot.getAngle() - degrees) > 45) timeLimit = 0.012 * Math.abs(robot.getAngle() - degrees);
         while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
             velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
             telemetry.addData("Count", count);

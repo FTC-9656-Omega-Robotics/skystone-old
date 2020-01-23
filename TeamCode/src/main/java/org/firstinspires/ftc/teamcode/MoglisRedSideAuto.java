@@ -117,7 +117,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 
                 //gets in position and strafes to skystone
-                motionMethods.moveMotionProfile(3.5, 1);
+                motionMethods.moveMotionProfile(2.5, 1);
                 //change the distance to back once tuned
                 motionMethods.strafe(180, .82, 1);
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
@@ -127,26 +127,26 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
                 //intakes stone
                 robot.rightGripper.setPosition(0);
                 //elbow down
-                sleep(1000);
+                sleep(400);
                 robot.cap.setPosition(.45);
                 //gripper closed
-                sleep(800);
+                sleep(500);
                 robot.rightGripper.setPosition(.37);
                 //elbow up
-                sleep(800);
+                sleep(500);
 
                 //moving to the other side
-                motionMethods.strafe(0, .35, 0.5);
+                motionMethods.strafe(0, .45, 0.5);
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
                 motionMethods.moveMotionProfile(57,1);
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
                 //go across the field to deposit in foundation
-                motionMethods.strafe(180, .33, 0.5);
+                motionMethods.strafe(180, .51, 0.5);
                 //time for low voltage is .35
 
                 //dump on foundation
                 robot.rightGripper.setPosition(0);
-                sleep(800);
+                sleep(500);
                 //elbow down
                 robot.cap.setPosition(1);
                 //gripper to super open?
@@ -155,7 +155,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
                 //move to position to intake 2nd skystone
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
-                motionMethods.strafe(0, .26, 0.5);
+                motionMethods.strafe(0, .36, 0.5);
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
                 robot.drivetrain.reverseDirection();
                 motionMethods.moveMotionProfileReverse(77.3,1);
@@ -178,14 +178,14 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
                 //move to deposit on foundation
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
-                motionMethods.strafe(0, .35, 0.5);
+                motionMethods.strafe(0, .45, 0.5);
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
-                motionMethods.moveMotionProfileZeroDegrees(80 ,1);
+                motionMethods.moveMotionProfileZeroDegrees(97 ,1);
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1 );
                 //change distance experimentally
 
                 //strafes and deposits stone
-                motionMethods.strafe(180, .35, 0.5);
+                motionMethods.strafe(180, .47, 0.5);
                 motionMethods.turnUsingPIDVoltageFieldCentric(0,1);
                 sleep(100);
                 robot.rightGripper.setPosition(0);
@@ -196,21 +196,30 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
                 sleep(500);
                 robot.rightGripper.setPosition(.33);
                 //elbow up
-                sleep(800);
+                sleep(200);
 
                 //strafes and moves to stones
-                motionMethods.strafe(0,.28, 1);
+                sleep(100);
+                robot.drivetrain.reverseDirection();
+                motionMethods.moveMotionProfileReverse(10,1);
+                robot.drivetrain.reverseDirection();
+                motionMethods.turnUsingPIDVoltageFieldCentric(0,1);
+
 
                 //foundation pull
                 motionMethods.turnUsingPIDVoltage(-90,1);
+
                 robot.drivetrain.reverseDirection();
                 motionMethods.moveMotionProfileReverse(8,1);
                 robot.drivetrain.reverseDirection();
                 robot.centerGripper.setPosition(1);
-                sleep(400);
-                motionMethods.moveMotionProfile(5,1);
-                motionMethods.turnUsingPIDVoltage(-90, .5);
-                motionMethods.moveMotionProfile(2, 1);
+                sleep(200);
+                motionMethods.moveMotionProfile(20,1);
+                motionMethods.turnUsingPIDVoltageFieldCentric(-200,1);
+                robot.centerGripper.setPosition(.51);
+                sleep(150);
+                motionMethods.moveMotionProfile(20,1);
+
 
 
 

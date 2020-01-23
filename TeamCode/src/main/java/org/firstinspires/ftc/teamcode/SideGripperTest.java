@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="Side Gripper Test")
+@Autonomous(name="Anything Tester")
 public class SideGripperTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public double robotSpeed = 0.45;
@@ -106,16 +106,18 @@ public class SideGripperTest extends LinearOpMode {
         robot.arm.setTargetPosition(-400);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        robot.blockGripper.setPosition(.75);
-        robot.pivot.setPosition(.62);
-        sleep(500);
-        robot.leftIntake.setPower(-1);
-        robot.rightIntake.setPower(1);
-
-        robot.rightGripper.setPosition(0);
-        robot.elbowGripper.setPosition(.75);
+        robot.centerGripper.setPosition(0.51);
+        sleep(200);
 
 
-        runtime.reset();
+        robot.centerGripper.setPosition(1);
+        sleep(200);
+        motionMethods.moveMotionProfile(10,1);
+        motionMethods.turnUsingPIDVoltage(-90,.75);
+
+
+
+
+
     }
 }
