@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(name="Anything Tester")
-public class SideGripperTest extends LinearOpMode {
+public class AnythingTester extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public double robotSpeed = 0.45;
     OmegaBot robot;
@@ -103,20 +103,43 @@ public class SideGripperTest extends LinearOpMode {
         }
 
         // set initial values for arm, block gripper, pivot, and intakes
-        robot.arm.setTargetPosition(-400);
+        robot.arm.setTargetPosition(-200);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(.5);
-        robot.centerGripper.setPosition(0.51);
-        sleep(200);
 
+        robot.centerGripper.setPosition(0.54);
+        sleep(700);
+/*
 
         robot.centerGripper.setPosition(1);
         sleep(200);
-        motionMethods.moveMotionProfile(10,1);
-        motionMethods.turnUsingPIDVoltage(-90,.75);
+        motionMethods.moveMotionProfile(25,1);
+        motionMethods.turnUsingPIDVoltageFieldCentric(-90,1);
+        robot.centerGripper.setPosition(.61);
+        sleep(500);
+        motionMethods.moveMotionProfile(25,1);
+*/
+
+        robot.rightGripper.setPosition(0.02);
+        //elbow down
+        sleep(1000);
+        robot.cap.setPosition(.40);
+        //gripper closed
+        sleep(1000);
+        robot.rightGripper.setPosition(.31);
+        //elbow up
+        sleep(1000);
+
+
+        //stowed side gripper testing
+        robot.cap.setPosition(0.98);
+        //gripper to super open?
+        robot.rightGripper.setPosition(0.31);
+        //elbow up
 
 
 
+        sleep(10000);
 
 
     }
