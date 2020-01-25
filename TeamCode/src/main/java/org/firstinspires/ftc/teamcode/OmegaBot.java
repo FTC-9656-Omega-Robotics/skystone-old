@@ -39,9 +39,9 @@ public class OmegaBot {
     public Servo pivot;
     public Servo blockGripper;
     public Servo centerGripper;
-    public Servo cap;
+    public Servo cap;//0 open, 0.5 closed, this is actually elbow gripper
     public Servo rightGripper;//0.33 up, 0 down
-    public Servo elbowGripper;//0 open, 0.5 closed
+    public Servo elbowGripper;//this is actually capstone, its just that i configged wrong
 
 
     DcMotor.RunMode myRunMode = DcMotor.RunMode.RUN_USING_ENCODER;
@@ -80,7 +80,7 @@ public class OmegaBot {
         centerGripper = hardwareMap.get(Servo.class, "center_gripper");
         cap = hardwareMap.get(Servo.class, "cap");
         rightGripper = hardwareMap.get(Servo.class, "left_gripper");
-        elbowGripper = hardwareMap.get(Servo.class, "elbow_gripper");//port number 5
+        elbowGripper = hardwareMap.get(Servo.class, "capstone");//port number 5
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu1".

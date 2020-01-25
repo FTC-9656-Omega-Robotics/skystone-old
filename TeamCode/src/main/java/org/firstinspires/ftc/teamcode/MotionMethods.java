@@ -165,6 +165,7 @@ public class MotionMethods {
         ElapsedTime runtime = new ElapsedTime();
         double timeLimit = 0.05 * Math.abs(robot.getAngle() - degrees);
         if(Math.abs(robot.getAngle() - degrees) > 45) timeLimit = 0.012 * Math.abs(robot.getAngle() - degrees);
+        if(Math.abs(robot.getAngle() - degrees) > 30) timeLimit = 0.02 * Math.abs(robot.getAngle() - degrees);
         while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
             velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
             telemetry.addData("Count", count);
@@ -245,5 +246,55 @@ public class MotionMethods {
         robot.drivetrain.setVelocity(power);
         while(robot.drivetrain.isPositioning());
         robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void turnTheCoolVivaWayFieldCentric(double degrees, double velocity) {
+        DcMotor.RunMode original = robot.frontLeft.getMode(); //assume all drive motors r the same runmode
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double max = 12.0 * velocity;
+        double targetHeading = degrees;
+        int count = 0;
+        ElapsedTime runtime = new ElapsedTime();
+        double timeLimit = 0.05 * Math.abs(robot.getAngle() - degrees);
+        if(Math.abs(robot.getAngle() - degrees) > 45) timeLimit = 0.012 * Math.abs(robot.getAngle() - degrees);
+        while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
+            velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
+            telemetry.addData("Count", count);
+            telemetry.addData("Calculated velocity [-1.0, 1/0]", robot.turnPID.getDiagnosticCalculatedPower() / 12.0);
+            telemetry.addData("PID power [-1.0, 1.0]", velocity);
+            telemetry.update();
+            robot.frontLeft.setPower(-velocity);
+            robot.backLeft.setPower(-velocity);
+            //robot.frontRight.setPower(velocity/30);
+            //robot.backRight.setPower(velocity/30);
+            count++;
+        }
+        robot.drivetrain.setVelocity(0);
+        robot.drivetrain.setRunMode(original);
+    }
+
+    public void turnTheCoolVivaWayFieldCentric2(double degrees, double velocity) {
+        DcMotor.RunMode original = robot.frontLeft.getMode(); //assume all drive motors r the same runmode
+        robot.drivetrain.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double max = 12.0 * velocity;
+        double targetHeading = degrees;
+        int count = 0;
+        ElapsedTime runtime = new ElapsedTime();
+        double timeLimit = 0.05 * Math.abs(robot.getAngle() - degrees);
+        if(Math.abs(robot.getAngle() - degrees) > 45) timeLimit = 0.012 * Math.abs(robot.getAngle() - degrees);
+        while (opMode.opModeIsActive() && runtime.seconds() < timeLimit) {
+            velocity = (robot.turnPID.calculatePower(robot.getAngle(), targetHeading, -max, max) / 12.0); //turnPID.calculatePower() used here will return a voltage
+            telemetry.addData("Count", count);
+            telemetry.addData("Calculated velocity [-1.0, 1/0]", robot.turnPID.getDiagnosticCalculatedPower() / 12.0);
+            telemetry.addData("PID power [-1.0, 1.0]", velocity);
+            telemetry.update();
+            robot.frontRight.setPower(velocity);
+            robot.backRight.setPower(velocity);
+            //robot.frontRight.setPower(velocity/30);
+            //robot.backRight.setPower(velocity/30);
+            count++;
+        }
+        robot.drivetrain.setVelocity(0);
+        robot.drivetrain.setRunMode(original);
     }
 }

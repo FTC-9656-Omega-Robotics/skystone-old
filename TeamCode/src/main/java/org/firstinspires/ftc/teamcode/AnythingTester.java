@@ -120,27 +120,13 @@ public class AnythingTester extends LinearOpMode {
         motionMethods.moveMotionProfile(25,1);
 */
 
-        robot.rightGripper.setPosition(0.02);
+        robot.elbowGripper.setPosition(1);
         //elbow down
         sleep(1000);
-        robot.cap.setPosition(.40);
-        //gripper closed
-        sleep(1000);
-        robot.rightGripper.setPosition(.31);
+
+        robot.elbowGripper.setPosition(0);
         //elbow up
         sleep(1000);
-
-
-        //stowed side gripper testing
-        robot.cap.setPosition(0.98);
-        //gripper to super open?
-        robot.rightGripper.setPosition(0.31);
-        //elbow up
-
-
-
-        sleep(10000);
-
 
     }
 }

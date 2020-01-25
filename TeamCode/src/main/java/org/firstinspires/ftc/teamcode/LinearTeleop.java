@@ -67,7 +67,7 @@ public class LinearTeleop extends LinearOpMode {
             robot.pivot.setPosition(.96);
         }
         if(gamepad2.right_bumper){
-            robot.blockGripper.setPosition(.75);
+            robot.blockGripper.setPosition(.5);
         }else if(gamepad2.left_bumper){
             robot.blockGripper.setPosition(.2);
         }
@@ -88,6 +88,7 @@ public class LinearTeleop extends LinearOpMode {
     }
 
     public void armProcess(){
+        double power = 0.5;
         if(gamepad2.a && armPos > -1700){
             armPos -= 5;
             //robot.arm.setPower(.75);
@@ -105,11 +106,12 @@ public class LinearTeleop extends LinearOpMode {
             armPos = -210;
         } else if (gamepad2.dpad_up) {
             armPos = -900;
+            power = .25;
         }
 
         robot.arm.setTargetPosition(armPos);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(0.5);
+        robot.arm.setPower(power);
     }
 
     public void intakeProcessIn(){
