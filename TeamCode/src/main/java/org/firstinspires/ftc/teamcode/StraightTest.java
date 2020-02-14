@@ -1,15 +1,22 @@
 package org.firstinspires.ftc.teamcode;
+package com.acmerobotics.roadrunner.drive;
+package com.acmerobotics.roadrunner.path;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+//roadrunner imports
+import com.acmerobotics.roadrunner.*;
+
 @Autonomous(name = "StraightTest")
 //@Disabled
 public class StraightTest extends LinearOpMode {
     OmegaBot robot;
     MotionMethods motionMethods;
+    ;
 
     public void runOpMode(){
         robot = new OmegaBot(telemetry, hardwareMap);
@@ -21,32 +28,16 @@ public class StraightTest extends LinearOpMode {
         waitForStart();
         robot.arm.setTargetPosition(-400);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(.5);
-        //teleop arm up
+        // specify coefficients/gains
+        PIDCoefficients coeffs = new PIDCoefficients(kP, kI, kD);
+        // create the controller
+        PIDFController controller = new PIDFController(coeffs);
 
-        motionMethods.moveMotionProfile(50,1);
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfileReverse(50,1);
-        robot.drivetrain.reverseDirection();
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        motionMethods.moveMotionProfile(50,1);
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfileReverse(50,1);
-        robot.drivetrain.reverseDirection();
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        motionMethods.moveMotionProfile(50,1);
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfileReverse(50,1);
-        robot.drivetrain.reverseDirection();
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        motionMethods.moveMotionProfile(50,1);
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,.5);
-        robot.drivetrain.reverseDirection();
-        motionMethods.moveMotionProfileReverse(50,1);
-        robot.drivetrain.reverseDirection();
-        motionMethods.turnUsingPIDVoltageFieldCentric(0,1);
+        // specify the setpoint
+        controller.setTargetPosition(setpoint);
+        double correction = controller.update(measuredPosition);
+        PIDFController controller = new PIDFController(coeffs, 0, 0, 0, x -> kG);
+
+
     }
 }

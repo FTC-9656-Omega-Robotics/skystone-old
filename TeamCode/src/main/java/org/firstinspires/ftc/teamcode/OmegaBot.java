@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+package com.acmerobotics.roadrunner.drive;
+package com.acmerobotics.roadrunner.path;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,14 +18,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import com.acmerobotics.roadrunner.drive.MecanumDrive;
+
 /**
  * Hardware mapping for SkyStone 2019
  */
 
 public class OmegaBot {
-    //telemetry an hardwaremap come from each opmode
+    //tele
+    // metry an hardwaremap come from each opmode
     public Telemetry telemetry;
     public HardwareMap hardwareMap;
+
+    //roadrunner stuff we want
+    public MecanumDrive mecanumDrive;
 
     //DC motors we want
     public DcMotorEx frontLeft;
@@ -85,6 +93,8 @@ public class OmegaBot {
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu1".
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //roadrunner start
+        mecanumDrive = new MecanumDrive(1, 1, 1, double trackWidth, double wheelBase)
 
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;

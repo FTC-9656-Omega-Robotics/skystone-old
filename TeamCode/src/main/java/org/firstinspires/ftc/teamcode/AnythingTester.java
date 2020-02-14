@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode;
+package com.acmerobotics.roadrunner.drive;
+package com.acmerobotics.roadrunner.path;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
 import org.firstinspires.ftc.teamcode.AutoBackend.CustomSkystoneDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+
+//roadrunner imports
+import com.acmerobotics.roadrunner.*;roadrunnerthingi
 
 @Autonomous(name="Anything Tester")
 public class AnythingTester extends LinearOpMode {
@@ -19,6 +25,9 @@ public class AnythingTester extends LinearOpMode {
     MotionMethods motionMethods;
     private OpenCvCamera phoneCam;
     private CustomSkystoneDetector skyStoneDetector;
+    private PathBuilder pathBuilder;
+    private PathFollower pathFollower;
+    private Path path;
 
     String skystonePosition = "none";
     double xPosition;
@@ -127,6 +136,5 @@ public class AnythingTester extends LinearOpMode {
         robot.elbowGripper.setPosition(0);
         //elbow up
         sleep(1000);
-
     }
 }
